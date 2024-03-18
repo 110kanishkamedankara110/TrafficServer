@@ -4,11 +4,15 @@ import dto.Gps;
 import dto.TrafficDataDto;
 import ejb.remote.TrafficData;
 
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Context;
 import web.util.ServerClients;
 
 import javax.naming.InitialContext;
@@ -23,8 +27,13 @@ import java.util.List;
 @Path("/api/traffic/")
 public class TrafficConteroller {
     TrafficData td;
+    @Context
+    HttpServletRequest request;
+    @Context
+    HttpServletResponse response;
 
     public TrafficConteroller() {
+
         InitialContext ic = null;
         try {
             ic = new InitialContext();
@@ -37,18 +46,21 @@ public class TrafficConteroller {
     @GET
     @Path("locations")
     public List<Gps> getLocations() {
+        response.setHeader("Access-Control-Allow-Origin", "*");
         return td.getLocations();
     }
 
     @GET
     @Path("getData/{latitude}/{longitude}")
     public List<TrafficDataDto> getData(@PathParam("latitude") String latitude, @PathParam("longitude") String longitude) {
+        response.setHeader("Access-Control-Allow-Origin", "*");
         return td.getData(latitude, longitude);
     }
 
     @GET
     @Path("getData")
     public List<TrafficDataDto> getData() {
+        response.setHeader("Access-Control-Allow-Origin", "*");
         return td.getData();
     }
 

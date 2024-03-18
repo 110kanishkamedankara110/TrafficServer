@@ -25,8 +25,13 @@ public class MessageReciver implements jakarta.jms.MessageListener {
 
             List<Session> sessions=ServerClients.getClients();
             sessions.forEach((session)->{
-                RemoteEndpoint.Async asyncRemote = session.getAsyncRemote();
-                asyncRemote.sendText(new Gson().toJson(data));
+               if(session.isOpen()){
+                    RemoteEndpoint.Async asyncRemote = session.getAsyncRemote();
+                    asyncRemote.sendText(new Gson().toJson(data));
+                }else{
+                   sessions.remove(session);
+               }
+
             });
 
         } catch (JMSException e) {

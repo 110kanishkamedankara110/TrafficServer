@@ -1,3 +1,132 @@
-body{
+::-webkit-scrollbar {
+    width: 10px;
+}
 
+/* Track */
+::-webkit-scrollbar-track {
+
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #344955;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #b30000;
+}
+
+
+body {
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+.navigation {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 10px;
+    height: 100%;
+    transition: 1s;
+    z-index: 9999999;
+
+}
+
+.nav-child {
+    width: 400px;
+    height: 100%;
+    border-radius: 25px;
+    padding: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    overflow: auto;
+    box-sizing: border-box;
+    background-color: #FFF6F6;
+    transition: 0.5s;
+}
+
+.cont {
+    width: 60px;
+    height: 60px;
+    background-color: #C5EBAA;
+    border-radius: 20px;
+    border: dashed 5px #C5EBAA;
+    margin: 10px;
+    transition: 0.5s;
+    background-image: url("../icons/left.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 30px;
+
+}
+
+.cont:hover {
+    border: dashed 5px #344955;
+}
+
+.items {
+    padding: 10px;
+    width: fit-content;
+    cursor: pointer;
+    transition: 0.03s;
+}
+
+/*.items:hover{*/
+/*    border:dashed 5px black ;*/
+/*}*/
+.main {
+    width: 100%;
+    height: 100vh;
+    padding: 100px;
+    box-sizing: border-box;
+}
+
+.main-child {
+    width: 100%;
+    height: 100%;
+    background-color: #DFF5FF;
+    border-radius: 25px;
+    box-sizing: border-box;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.row {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.column {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 15px;
+}
+
+.trafficDet {
+    border-radius: 25px;
+    width: 100%;
+    border: dashed 5px #DFF5FF;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    background-color: #DFF5FF;
+    height: fit-content;
+    transition: 0.5s;
+    cursor: pointer;
+}
+.trafficDet:hover{
+    border: dashed 5px #344955;
 }

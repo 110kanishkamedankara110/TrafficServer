@@ -5,6 +5,11 @@ let greenData = [];
 let yellowData = [];
 let xValues = [];
 
+
+let selectedLatitude = null;
+let selectedLongitude = null;
+
+
 var myChart = new Chart("myChart", {
     type: "line",
     data: {
@@ -63,6 +68,7 @@ var barChart = new Chart("barchart", {
     },
     options: {
         responsive: true,
+        legend: {display: false},
         maintainAspectRatio: false,
         scales: {
             xAxes: [{
@@ -116,71 +122,12 @@ function connect() {
             .then(result => {
                 let locationData = {};
                 result.forEach(loc => {
-                    let locdata = {speed: 0, traffic: 0,latitude:loc.latitude,longitude:loc.longitude}
+                    let locdata = {speed: 0, traffic: 0, latitude: loc.latitude, longitude: loc.longitude}
                     locationData[loc.latitude + "" + loc.longitude] = locdata;
                 })
+                var res = JSON.parse(event.data);
+                load(res, locationData);
 
-                let redData = [];
-                let greenData = [];
-                let yellowData = [];
-                let xValues = [];
-
-
-                let redAvg = 0;
-                let greenAvg = 0;
-                let yellowAvg = 0;
-
-                let redCount = 0;
-                let greenCount = 0;
-                let yellowCount = 0;
-
-
-                result = JSON.parse(event.data);
-                var i = 0;
-                result.forEach(element => {
-
-                    locationData[element.gps.latitude + "" + element.gps.longitude].speed = element.speed;
-                    locationData[element.gps.latitude + "" + element.gps.longitude].traffic = element.trafficLight;
-
-                    console.log(element);
-                    switch (element.trafficLight) {
-                        case (1):
-                            greenCount++;
-                            greenAvg += element.speed;
-                            greenData.push(element.speed);
-                            break;
-                        case (3):
-                            redCount++
-                            redAvg += element.speed;
-                            redData.push(element.speed);
-                            break;
-                        case (2):
-                            yellowCount++;
-                            yellowAvg += element.speed
-                            yellowData.push(element.speed);
-                            break;
-                    }
-                    xValues.push(i++);
-                });
-
-                redAvg = redAvg / redCount;
-                greenAvg = greenAvg / greenCount;
-                yellowAvg = yellowAvg / yellowCount;
-
-
-                myChart.data.labels = xValues;
-                myChart.data.datasets[0].data = redData;
-                myChart.data.datasets[1].data = greenData;
-                myChart.data.datasets[2].data = yellowData;
-
-
-                barChart.data.datasets[0].data[0] = redAvg;
-                barChart.data.datasets[0].data[1] = greenAvg;
-                barChart.data.datasets[0].data[2] = yellowAvg;
-
-                myChart.update();
-                barChart.update();
-                loadLocations(locationData);
 
             })
             .catch(error => console.log('error', error));
@@ -209,92 +156,99 @@ var requestOptions = {
     redirect: 'follow'
 };
 
-fetch("http://localhost:8080/web-traffic/api/traffic/locations", requestOptions)
-    .then(response => response.json())
-    .then(result => {
-        let locationData = {};
-        result.forEach(loc => {
-            let locdata = {speed: 0, traffic: 0,latitude:loc.latitude,longitude:loc.longitude}
-            locationData[loc.latitude + "" + loc.longitude] = locdata;
-        })
-
-        let xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
-
-        xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === 4) {
-
-                let redAvg = 0;
-                let greenAvg = 0;
-                let yellowAvg = 0;
-
-                let redCount = 0;
-                let greenCount = 0;
-                let yellowCount = 0;
+maindataFetch();
 
 
-                const result = JSON.parse(xhr.responseText);
-                let i = 0;
-                result.forEach(element => {
-
-                    locationData[element.gps.latitude + "" + element.gps.longitude].speed = element.speed;
-                    locationData[element.gps.latitude + "" + element.gps.longitude].traffic = element.trafficLight;
+function load(result, locationData) {
 
 
-                    switch (element.trafficLight) {
-                        case (1):
-                            greenData.push(element.speed);
-                            greenCount++;
-                            greenAvg += element.speed;
-                            break;
-
-                        case (3):
-                            redData.push(element.speed);
-                            redCount++
-                            redAvg += element.speed;
-                            break;
-
-                        case (2):
-                            yellowData.push(element.speed);
-                            yellowCount++;
-                            yellowAvg += element.speed
-                            break;
-
-                    }
-                    xValues.push(i++);
-
-                });
+    let redData = [];
+    let greenData = [];
+    let yellowData = [];
+    let xValues = [];
 
 
-                redAvg = redAvg / redCount;
-                greenAvg = greenAvg / greenCount;
-                yellowAvg = yellowAvg / yellowCount;
+    let redAvg = 0;
+    let greenAvg = 0;
+    let yellowAvg = 0;
+
+    let redCount = 0;
+    let greenCount = 0;
+    let yellowCount = 0;
+
+    let maxSPeed=0;
+    let minSpeed=260;
 
 
-                yValues.push(redAvg);
-                yValues.push(greenAvg);
-                yValues.push(yellowAvg);
+    let i = 0;
+    result.forEach(element => {
 
+        locationData[element.gps.latitude + "" + element.gps.longitude].speed = element.speed;
+        locationData[element.gps.latitude + "" + element.gps.longitude].traffic = element.trafficLight;
 
-                myChart.update();
-                barChart.update();
-
-                loadLocations(locationData);
+        if ((element.gps.latitude == selectedLatitude && element.gps.longitude == selectedLongitude) || selectedLatitude == null && selectedLongitude == null) {
+            switch (element.trafficLight) {
+                case (1):
+                    greenCount++;
+                    greenAvg += element.speed;
+                    greenData.push(element.speed);
+                    break;
+                case (3):
+                    redCount++
+                    redAvg += element.speed;
+                    redData.push(element.speed);
+                    break;
+                case (2):
+                    yellowCount++;
+                    yellowAvg += element.speed
+                    yellowData.push(element.speed);
+                    break;
             }
-        });
+            if(maxSPeed<element.speed){
+                maxSPeed=element.speed;
+            }
+            if(minSpeed>element.speed && minSpeed!==0){
+                minSpeed=element.speed;
+            }
+            xValues.push(i++);
+        }
+    });
 
-        xhr.open("GET", "http://localhost:8080/web-traffic/api/traffic/getData", true);
+    redAvg = redAvg / redCount;
+    greenAvg = greenAvg / greenCount;
+    yellowAvg = yellowAvg / yellowCount;
 
-        xhr.send();
+
+    myChart.data.labels = xValues;
+    myChart.data.datasets[0].data = redData;
+    myChart.data.datasets[1].data = greenData;
+    myChart.data.datasets[2].data = yellowData;
 
 
-    })
-    .catch(error => console.log('error', error));
+    barChart.data.datasets[0].data[0] = redAvg;
+    barChart.data.datasets[0].data[1] = greenAvg;
+    barChart.data.datasets[0].data[2] = yellowAvg;
+
+    myChart.update();
+    barChart.update();
+
+    document.getElementById("max").innerHTML="Max Speed : "+maxSPeed
+    document.getElementById("min").innerHTML="Min Speed : "+minSpeed;
+
+
+    loadLocations(locationData);
+
+}
+
+let locationList = [];
 
 function loadLocations(data) {
 
+
+
+
     let lights = ["#4CCD99", "#FFC436", "#EE4266"]
-    document.getElementById("locations").innerHTML="";
+    document.getElementById("locations").innerHTML = "";
 
     Object.keys(data).reverse().forEach((value) => {
 
@@ -310,7 +264,7 @@ function loadLocations(data) {
             let light = document.createElement("div");
             if (data[value].traffic == i) {
                 light.style = "width: 100%;aspect-ratio:1;border-radius: 100%;";
-                light.style.backgroundColor=lights[i - 1];
+                light.style.backgroundColor = lights[i - 1];
             } else {
                 light.style = "width: 100%;aspect-ratio:1;background-color:white;border-radius: 100%;"
             }
@@ -320,19 +274,19 @@ function loadLocations(data) {
         left.style = "width: 100%;padding: 10px;box-sizing: border-box;display: flex;flex-direction: column;gap: 5px;height: fit-content";
 
         let leftFont = document.createElement("div");
-        leftFont.style="font-size: 15px;box-sizing: border-box;color: #344955";
+        leftFont.style = "font-size: 15px;box-sizing: border-box;color: #344955";
 
-        let lat=document.createElement("p");
-        lat.style="margin: 0";
-        lat.innerHTML="Latitude : "+data[value].latitude;
+        let lat = document.createElement("p");
+        lat.style = "margin: 0";
+        lat.innerHTML = "Latitude : " + data[value].latitude;
 
-        let lon=document.createElement("p");
-        lon.style="margin: 0";
-        lon.innerHTML="Longitude : "+data[value].longitude;
+        let lon = document.createElement("p");
+        lon.style = "margin: 0";
+        lon.innerHTML = "Longitude : " + data[value].longitude;
 
-        let speed=document.createElement("p");
-        speed.style="text-align: end;font-size: 40px;padding: 10px;margin: 0;margin-top: 20px";
-        speed.innerHTML=data[value].speed+" Kmph";
+        let speed = document.createElement("p");
+        speed.style = "text-align: end;font-size: 40px;padding: 10px;margin: 0;margin-top: 20px";
+        speed.innerHTML = data[value].speed + " Kmph";
 
         leftFont.appendChild(lat);
         leftFont.appendChild(lon);
@@ -343,9 +297,68 @@ function loadLocations(data) {
         mainDiv.appendChild(trafficLight);
         mainDiv.appendChild(left);
 
+        locationList.push(mainDiv)
+
+        mainDiv.id = data[value].latitude + "" + data[value].longitude;
+
+        mainDiv.addEventListener('click', () => {
+            selectedLatitude = data[value].latitude;
+            selectedLongitude = data[value].longitude;
+
+            locationList.forEach((l) => {
+                l.className = "trafficDet";
+            });
+            maindataFetch();
+
+        })
+
 
         document.getElementById("locations").appendChild(mainDiv);
-
-
     });
+
+
+    if (selectedLongitude != null && selectedLatitude != null) {
+        document.getElementById(selectedLatitude + "" + selectedLongitude).className = "trafficDetSel";
+    }
+
+}
+
+document.getElementById("reset").addEventListener('click', () => {
+    selectedLatitude = null;
+    selectedLongitude = null;
+    maindataFetch();
+    locationList.forEach((l) => {
+        l.className = "trafficDet";
+    });
+});
+
+function maindataFetch() {
+
+    fetch("http://localhost:8080/web-traffic/api/traffic/locations", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+            let locationData = {};
+            result.forEach(loc => {
+                let locdata = {speed: 0, traffic: 0, latitude: loc.latitude, longitude: loc.longitude}
+                locationData[loc.latitude + "" + loc.longitude] = locdata;
+            })
+
+            let xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    load(JSON.parse(xhr.responseText), locationData)
+                }
+            });
+
+            xhr.open("GET", "http://localhost:8080/web-traffic/api/traffic/getData", true);
+
+            xhr.send();
+
+
+        })
+        .catch(error => console.log('error', error));
+
+
 }

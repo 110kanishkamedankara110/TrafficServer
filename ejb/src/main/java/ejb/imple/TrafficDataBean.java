@@ -5,7 +5,7 @@ import dto.TrafficDataDto;
 import ejb.remote.TrafficData;
 import entity.GpsEnitiy;
 import entity.TrafficDataEntity;
-import jakarta.ejb.Stateful;
+import jakarta.ejb.Singleton;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import util.HibernateUtil;
@@ -13,7 +13,7 @@ import util.HibernateUtil;
 import java.util.LinkedList;
 import java.util.List;
 
-@Stateful
+@Singleton
 public class TrafficDataBean implements TrafficData {
     @Override
     public List<TrafficDataDto> getData() {

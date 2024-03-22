@@ -4,28 +4,24 @@ import dto.Gps;
 import dto.TrafficDataDto;
 import ejb.remote.TrafficData;
 
-import jakarta.inject.Inject;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
+
+import jakarta.ejb.EJB;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Context;
-import web.util.ServerClients;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.List;
 
 
 @Path("/api/traffic/")
 public class TrafficConteroller {
+    @EJB(lookup ="java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataBean")
     TrafficData td;
     @Context
     HttpServletRequest request;
@@ -37,7 +33,7 @@ public class TrafficConteroller {
         InitialContext ic = null;
         try {
             ic = new InitialContext();
-            td = (TrafficData) ic.lookup("java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataBean");
+//            td = (TrafficData) ic.lookup("java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataBean");
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }

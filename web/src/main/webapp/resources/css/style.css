@@ -98,6 +98,7 @@ body {
     display: flex;
     flex-direction: row;
     gap: 10px;
+    overflow-x: auto;
 }
 
 .row {
@@ -127,6 +128,29 @@ body {
     transition: 0.5s;
     cursor: pointer;
 }
+
+.trafficDetSel {
+    border-radius: 25px;
+    width: 100%;
+    border: dashed 5px #344955;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    background-color: #DFF5FF;
+    height: fit-content;
+    transition: 0.5s;
+    cursor: pointer;
+}
 .trafficDet:hover{
     border: dashed 5px #344955;
+}
+.resetButton{
+    width: 100px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #DFF5FF;
+    border:dashed 2px #DFF5FF;
+}
+.resetButton:hover{
+    border: dashed 2px #344955;
 }

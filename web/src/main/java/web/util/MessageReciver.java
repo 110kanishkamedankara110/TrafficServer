@@ -2,9 +2,7 @@ package web.util;
 
 import com.google.gson.Gson;
 import dto.TrafficDataDto;
-import jakarta.annotation.Resource;
-import jakarta.ejb.ActivationConfigProperty;
-import jakarta.ejb.MessageDriven;
+
 import jakarta.jms.*;
 import jakarta.websocket.RemoteEndpoint;
 import jakarta.websocket.Session;

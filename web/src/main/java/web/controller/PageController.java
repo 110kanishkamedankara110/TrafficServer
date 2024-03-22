@@ -3,6 +3,7 @@ package web.controller;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import org.glassfish.jersey.server.mvc.Viewable;
+import web.util.MessageReciver;
 
 import javax.swing.text.View;
 
@@ -11,6 +12,7 @@ public class PageController {
     @GET
     @Path("index")
     public Viewable getHome(){
+        new MessageReciver().startMessageListener();
        return new Viewable("/views/index");
     }
 }

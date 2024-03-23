@@ -12,7 +12,6 @@ public class PageController {
     @GET
     @Path("index")
     public Viewable getHome(){
-        new MessageReciver().startMessageListener();
        return new Viewable("/views/index");
     }
 }

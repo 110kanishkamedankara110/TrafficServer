@@ -18,14 +18,13 @@ public class MessageReceiver implements MessageListener {
     public void onMessage(Message message) {
 
         try {
-            synchronized (LockingObject.class) {
+
 
                 Gson gson = new Gson();
                 TrafficDataDto trdto = gson.fromJson(message.getBody(String.class), TrafficDataDto.class);
                 TrafficDataSaveBean tdab = new TrafficDataSaveBean();
                 tdab.save(trdto);
 
-            }
         } catch (JMSException e) {
             e.printStackTrace();
         }

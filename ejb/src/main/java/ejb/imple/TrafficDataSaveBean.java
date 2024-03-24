@@ -11,10 +11,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.HibernateUtil;
+import util.LockingObject;
 
 @Singleton
 public class TrafficDataSaveBean implements TrafficDataSave {
-    public void save(TrafficDataDto trdto){
+    public void save(TrafficDataDto trdto) {
+
         SessionFactory sf = HibernateUtil.getSessionFactory();
 
         Session ses = sf.openSession();
@@ -24,34 +26,36 @@ public class TrafficDataSaveBean implements TrafficDataSave {
         que.setParameter("lat", trdto.getGps().getLatitude());
         que.setParameter("lon", trdto.getGps().getLongitude());
 
+        synchronized (LockingObject.class) {
+            if (!que.getResultList().isEmpty()) {
+                ge = que.getSingleResult();
+            } else {
+                ge = new GpsEnitiy();
+                ge.setLatitude(trdto.getGps().getLatitude());
+                ge.setLongitude(trdto.getGps().getLongitude());
+            }
 
-        if (!que.getResultList().isEmpty()) {
-            ge = que.getSingleResult();
-        } else {
-            ge = new GpsEnitiy();
-            ge.setLatitude(trdto.getGps().getLatitude());
-            ge.setLongitude(trdto.getGps().getLongitude());
+            TrafficDataEntity td = new TrafficDataEntity();
+
+            td.setGps(ge);
+            td.setSpeed(trdto.getSpeed());
+            td.setTrafficLight(trdto.getTrafficLight());
+
+            ge.setTrafficData(td);
+
+
+            try {
+                ta.begin();
+                ses.merge(td);
+                ta.commit();
+            } catch (Exception ex) {
+                ta.rollback();
+                ex.printStackTrace();
+            } finally {
+                ses.close();
+            }
+            MessageSender.sendMessage();
         }
-
-        TrafficDataEntity td = new TrafficDataEntity();
-
-        td.setGps(ge);
-        td.setSpeed(trdto.getSpeed());
-        td.setTrafficLight(trdto.getTrafficLight());
-
-        ge.setTrafficData(td);
-
-
-        try {
-            ta.begin();
-            ses.merge(td);
-            ta.commit();
-        } catch (Exception ex) {
-            ta.rollback();
-            ex.printStackTrace();
-        } finally {
-            ses.close();
-        }
-        MessageSender.sendMessage();
     }
+
 }

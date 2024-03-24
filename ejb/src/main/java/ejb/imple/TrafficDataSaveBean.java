@@ -4,6 +4,7 @@ import dto.TrafficDataDto;
 import ejb.remote.TrafficDataSave;
 import entity.GpsEnitiy;
 import entity.TrafficDataEntity;
+import jakarta.ejb.Singleton;
 import message.MessageSender;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,6 +12,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.HibernateUtil;
 
+@Singleton
 public class TrafficDataSaveBean implements TrafficDataSave {
     public void save(TrafficDataDto trdto){
         SessionFactory sf = HibernateUtil.getSessionFactory();

@@ -6,7 +6,6 @@ import ejb.imple.TrafficDataSaveBean;
 import jakarta.ejb.ActivationConfigProperty;
 import jakarta.ejb.MessageDriven;
 import jakarta.jms.*;
-import util.LockingObject;
 
 @MessageDriven(
         activationConfig = {

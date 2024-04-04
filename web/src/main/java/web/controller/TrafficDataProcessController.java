@@ -1,14 +1,11 @@
 package web.controller;
 
 import dto.AverageData;
-import dto.Gps;
 import ejb.remote.TrafficDataProcess;
-import jakarta.ejb.EJB;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Context;
 
 import javax.naming.InitialContext;
@@ -26,9 +23,9 @@ public class TrafficDataProcessController {
 
     public TrafficDataProcessController() {
 
-        InitialContext ic = null;
+
         try {
-            ic = new InitialContext();
+            InitialContext  ic = new InitialContext();
             td = (TrafficDataProcess) ic.lookup("java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataProcessBean");
         } catch (NamingException e) {
             throw new RuntimeException(e);

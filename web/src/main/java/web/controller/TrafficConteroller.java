@@ -5,7 +5,6 @@ import dto.TrafficDataDto;
 import ejb.remote.TrafficData;
 
 
-import jakarta.ejb.EJB;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.GET;
@@ -29,9 +28,9 @@ public class TrafficConteroller {
 
     public TrafficConteroller() {
 
-        InitialContext ic = null;
+
         try {
-            ic = new InitialContext();
+            InitialContext ic = new InitialContext();
             td = (TrafficData) ic.lookup("java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataBean");
         } catch (NamingException e) {
             throw new RuntimeException(e);

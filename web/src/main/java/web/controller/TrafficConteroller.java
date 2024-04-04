@@ -21,7 +21,6 @@ import java.util.List;
 
 @Path("/api/traffic/")
 public class TrafficConteroller {
-    @EJB(lookup ="java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataBean")
     TrafficData td;
     @Context
     HttpServletRequest request;
@@ -33,7 +32,7 @@ public class TrafficConteroller {
         InitialContext ic = null;
         try {
             ic = new InitialContext();
-//            td = (TrafficData) ic.lookup("java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataBean");
+            td = (TrafficData) ic.lookup("java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataBean");
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }

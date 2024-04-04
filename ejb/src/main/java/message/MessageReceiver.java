@@ -18,8 +18,6 @@ public class MessageReceiver implements MessageListener {
     public void onMessage(Message message) {
 
         try {
-
-
                 Gson gson = new Gson();
                 TrafficDataDto trdto = gson.fromJson(message.getBody(String.class), TrafficDataDto.class);
                 TrafficDataSaveBean tdab = new TrafficDataSaveBean();

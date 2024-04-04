@@ -18,7 +18,6 @@ import java.util.List;
 @Path("/api/processed/")
 public class TrafficDataProcessController {
 
-@EJB(lookup = "java:global/trafficEar/com.phoenix-ejb-traffic-1.0/TrafficDataProcessBean")
     TrafficDataProcess td;
     @Context
     HttpServletRequest request;
